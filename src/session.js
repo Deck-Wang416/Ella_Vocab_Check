@@ -9,16 +9,29 @@ export function loadSession() {
 
   try {
     const parsed = JSON.parse(raw)
-    return parsed?.username ? parsed : null
+    return parsed?.username ? sanitizeSession(parsed) : null
   } catch {
     return null
   }
 }
 
 export function saveSession(session) {
-  window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(session))
+  window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(sanitizeSession(session)))
 }
 
 export function clearSession() {
   window.sessionStorage.removeItem(SESSION_KEY)
+}
+
+function sanitizeSession(session) {
+  return {
+    username: session.username,
+    assessmentId: session.assessmentId ?? '',
+    answers: isPlainObject(session.answers) ? session.answers : {},
+    currentIndex: Number.isInteger(session.currentIndex) && session.currentIndex >= 0 ? session.currentIndex : 0,
+  }
+}
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
 }

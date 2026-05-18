@@ -133,11 +133,20 @@ function AssessmentPage({ session, onLogout }) {
           return
         }
 
+        const questionIds = new Set(data.assessment.questions.map((item) => item.id))
+        const restoredAnswers = Object.fromEntries(
+          Object.entries(session.answers ?? {}).filter(([questionId]) => questionIds.has(questionId)),
+        )
+        const maxIndex = Math.max(data.assessment.questions.length - 1, 0)
+        const restoredIndex = Math.min(session.currentIndex ?? 0, maxIndex)
+
         setState((current) => ({
           ...current,
           isLoading: false,
           assessment: data.assessment,
           error: '',
+          answers: restoredAnswers,
+          currentIndex: restoredIndex,
         }))
       } catch (loadError) {
         if (!active) {
@@ -157,6 +166,19 @@ function AssessmentPage({ session, onLogout }) {
       active = false
     }
   }, [onLogout, session])
+
+  useEffect(() => {
+    if (!session?.username || state.isLoading || !state.assessment) {
+      return
+    }
+
+    saveSession({
+      username: session.username,
+      assessmentId: state.assessment.id,
+      answers: state.answers,
+      currentIndex: state.currentIndex,
+    })
+  }, [session, state.answers, state.assessment, state.currentIndex, state.isLoading])
 
   const assessment = state.assessment
   const questions = assessment?.questions ?? []
