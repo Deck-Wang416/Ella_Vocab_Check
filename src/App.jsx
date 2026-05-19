@@ -73,7 +73,7 @@ function LoginPage({ message, onLogin }) {
       <div className="login-card">
         <p className="eyebrow">Ella Vocabulary Assessment</p>
         <h1>Sign in</h1>
-        <p className="support-copy">Use the assigned child account to begin the assessment.</p>
+        <p className="support-copy">Use the assigned account to begin the assessment.</p>
         <form className="login-form" onSubmit={handleSubmit}>
           <label>
             <span>Username</span>
@@ -443,7 +443,7 @@ function AssessmentPage({ session, onLogout }) {
                 Cancel
               </button>
               <button className="primary-button" type="button" onClick={() => onLogout()}>
-                Confirm log out
+                Confirm
               </button>
             </div>
           </div>
