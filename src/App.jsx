@@ -116,6 +116,7 @@ function AssessmentPage({ session, onLogout }) {
     currentIndex: 0,
     showIncompleteWarning: false,
     showConfirmModal: false,
+    showLogoutModal: false,
   })
 
   useEffect(() => {
@@ -267,6 +268,17 @@ function AssessmentPage({ session, onLogout }) {
     }
   }
 
+  function handleLogoutIntent() {
+    if (state.isSubmitting || state.isSubmitSuccess) {
+      return
+    }
+
+    setState((current) => ({
+      ...current,
+      showLogoutModal: true,
+    }))
+  }
+
   if (state.isLoading) {
     return (
       <section className="status-page">
@@ -290,7 +302,7 @@ function AssessmentPage({ session, onLogout }) {
           <p className="eyebrow">Assessment</p>
           <h1>{assessment.title || 'Vocabulary Check'}</h1>
         </div>
-        <button className="ghost-button" type="button" onClick={() => onLogout()}>
+        <button className="ghost-button" type="button" onClick={handleLogoutIntent}>
           Log out
         </button>
       </header>
@@ -406,6 +418,32 @@ function AssessmentPage({ session, onLogout }) {
                 onClick={confirmSubmit}
               >
                 {state.isSubmitting ? 'Submitting...' : 'Confirm'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {state.showLogoutModal ? (
+        <div className="modal-backdrop" role="presentation">
+          <div aria-modal="true" className="modal-card" role="dialog">
+            <h2>Log out now?</h2>
+            <p>Your current progress is saved on this device. You can continue later by logging in again.</p>
+            <div className="modal-actions">
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={() =>
+                  setState((current) => ({
+                    ...current,
+                    showLogoutModal: false,
+                  }))
+                }
+              >
+                Cancel
+              </button>
+              <button className="primary-button" type="button" onClick={() => onLogout()}>
+                Confirm log out
               </button>
             </div>
           </div>
