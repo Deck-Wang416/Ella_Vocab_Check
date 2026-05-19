@@ -109,6 +109,7 @@ function AssessmentPage({ session, onLogout }) {
   const [state, setState] = useState({
     isLoading: true,
     isSubmitting: false,
+    isSubmitSuccess: false,
     error: '',
     assessment: null,
     answers: {},
@@ -243,10 +244,19 @@ function AssessmentPage({ session, onLogout }) {
         assessmentId: assessment.id,
         answers: state.answers,
       })
-      onLogout({
-        type: 'success',
-        text: 'Assessment submitted successfully.',
-      })
+      setState((current) => ({
+        ...current,
+        isSubmitting: false,
+        isSubmitSuccess: true,
+        showConfirmModal: false,
+      }))
+
+      window.setTimeout(() => {
+        onLogout({
+          type: 'success',
+          text: 'Assessment submitted successfully.',
+        })
+      }, 1600)
     } catch (submissionError) {
       setState((current) => ({
         ...current,
@@ -301,6 +311,7 @@ function AssessmentPage({ session, onLogout }) {
               <button
                 key={option.id}
                 className={`option-card${selected ? ' selected' : ''}`}
+                disabled={state.isSubmitting || state.isSubmitSuccess}
                 type="button"
                 onClick={() => selectOption(question.id, option.id)}
               >
@@ -316,7 +327,7 @@ function AssessmentPage({ session, onLogout }) {
       <footer className="bottom-bar">
         <button
           className="secondary-button"
-          disabled={state.currentIndex === 0 || state.isSubmitting}
+          disabled={state.currentIndex === 0 || state.isSubmitting || state.isSubmitSuccess}
           type="button"
           onClick={goToPrevious}
         >
@@ -333,18 +344,29 @@ function AssessmentPage({ session, onLogout }) {
         {isLastQuestion ? (
           <button
             className="primary-button"
-            disabled={state.isSubmitting}
+            disabled={state.isSubmitting || state.isSubmitSuccess}
             type="button"
             onClick={handleSubmitIntent}
           >
             Submit
           </button>
         ) : (
-          <button className="primary-button" disabled={state.isSubmitting} type="button" onClick={goToNext}>
+          <button
+            className="primary-button"
+            disabled={state.isSubmitting || state.isSubmitSuccess}
+            type="button"
+            onClick={goToNext}
+          >
             Next
           </button>
         )}
       </footer>
+
+      {state.isSubmitSuccess ? (
+        <div className="toast-success" role="status">
+          Submitted successfully. Preparing to log out...
+        </div>
+      ) : null}
 
       {state.showIncompleteWarning ? (
         <div className="toast-warning" role="alert">
