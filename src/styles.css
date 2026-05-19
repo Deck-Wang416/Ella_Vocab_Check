@@ -60,6 +60,19 @@ button {
   box-shadow: var(--shadow);
   padding: 32px;
   backdrop-filter: blur(12px);
+}
+
+.status-card {
+  text-align: center;
+}
+
+.login-card {
+  text-align: left;
+}
+
+.login-card > .eyebrow,
+.login-card > h1,
+.login-card > .support-copy {
   text-align: center;
 }
 
