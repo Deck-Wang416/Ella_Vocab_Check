@@ -360,7 +360,7 @@ function AssessmentPage({ session, onLogout }) {
             <div className="desktop-progress-fill" style={{ height: `${progressPercent}%` }} />
           </div>
           <div className="desktop-progress-label">
-            {answeredCount}/{questions.length}
+            {state.currentIndex + 1}/{questions.length}
           </div>
         </div>
 
@@ -400,7 +400,7 @@ function AssessmentPage({ session, onLogout }) {
               <div className="mobile-progress-fill" style={{ width: `${progressPercent}%` }} />
             </div>
             <div className="mobile-progress-label">
-              {answeredCount}/{questions.length}
+              {state.currentIndex + 1}/{questions.length}
             </div>
           </div>
         </div>
