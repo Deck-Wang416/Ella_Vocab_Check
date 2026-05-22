@@ -240,6 +240,23 @@ function AssessmentPage({ session, onLogout }) {
     })
   }, [session, state.answers, state.assessment, state.currentIndex, state.isLoading])
 
+  useEffect(() => {
+    if (!state.showIncompleteWarning) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setState((current) => ({
+        ...current,
+        showIncompleteWarning: false,
+      }))
+    }, 2200)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [state.showIncompleteWarning])
+
   const assessment = state.assessment
   const questions = assessment?.questions ?? []
   const question = questions[state.currentIndex]
