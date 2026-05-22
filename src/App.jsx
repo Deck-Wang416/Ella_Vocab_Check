@@ -39,58 +39,6 @@ function App() {
   )
 }
 
-function buildQuestionSlots(questions, currentIndex, slotCount) {
-  const total = questions.length
-  const edgeWindow = slotCount - 2
-  const middleWindow = slotCount - 4
-
-  if (total <= slotCount) {
-    return questions.map((question, index) => ({
-      type: 'question',
-      question,
-      index,
-    }))
-  }
-
-  if (currentIndex <= edgeWindow - 1) {
-    return [
-      ...questions.slice(0, edgeWindow).map((question, index) => ({
-        type: 'question',
-        question,
-        index,
-      })),
-      { type: 'ellipsis', key: `ellipsis-end-${slotCount}` },
-      { type: 'question', question: questions[total - 1], index: total - 1 },
-    ]
-  }
-
-  if (currentIndex >= total - edgeWindow) {
-    return [
-      { type: 'question', question: questions[0], index: 0 },
-      { type: 'ellipsis', key: `ellipsis-start-${slotCount}` },
-      ...questions.slice(total - edgeWindow).map((question, offset) => ({
-        type: 'question',
-        question,
-        index: total - edgeWindow + offset,
-      })),
-    ]
-  }
-
-  const middleStart = currentIndex - Math.floor(middleWindow / 2)
-
-  return [
-    { type: 'question', question: questions[0], index: 0 },
-    { type: 'ellipsis', key: `ellipsis-start-${slotCount}` },
-    ...questions.slice(middleStart, middleStart + middleWindow).map((question, offset) => ({
-      type: 'question',
-      question,
-      index: middleStart + offset,
-    })),
-    { type: 'ellipsis', key: `ellipsis-end-${slotCount}` },
-    { type: 'question', question: questions[total - 1], index: total - 1 },
-  ]
-}
-
 function formatPromptWord(word) {
   if (!word) {
     return ''
@@ -172,7 +120,7 @@ function AssessmentPage({ session, onLogout }) {
     assessment: null,
     answers: {},
     currentIndex: 0,
-    showIncompleteWarning: false,
+    warningMessage: '',
     showConfirmModal: false,
     showLogoutModal: false,
   })
@@ -241,28 +189,28 @@ function AssessmentPage({ session, onLogout }) {
   }, [session, state.answers, state.assessment, state.currentIndex, state.isLoading])
 
   useEffect(() => {
-    if (!state.showIncompleteWarning) {
+    if (!state.warningMessage) {
       return
     }
 
     const timeoutId = window.setTimeout(() => {
       setState((current) => ({
         ...current,
-        showIncompleteWarning: false,
+        warningMessage: '',
       }))
     }, 2200)
 
     return () => {
       window.clearTimeout(timeoutId)
     }
-  }, [state.showIncompleteWarning])
+  }, [state.warningMessage])
 
   const assessment = state.assessment
   const questions = assessment?.questions ?? []
   const question = questions[state.currentIndex]
   const isLastQuestion = state.currentIndex === questions.length - 1
-  const desktopQuestionSlots = buildQuestionSlots(questions, state.currentIndex, 7)
-  const mobileQuestionSlots = buildQuestionSlots(questions, state.currentIndex, 3)
+  const answeredCount = questions.filter((item) => Boolean(state.answers[item.id])).length
+  const progressPercent = questions.length === 0 ? 0 : (answeredCount / questions.length) * 100
 
   function selectOption(questionId, optionId) {
     setState((current) => ({
@@ -271,7 +219,7 @@ function AssessmentPage({ session, onLogout }) {
         ...current.answers,
         [questionId]: optionId,
       },
-      showIncompleteWarning: false,
+      warningMessage: '',
     }))
   }
 
@@ -283,16 +231,17 @@ function AssessmentPage({ session, onLogout }) {
   }
 
   function goToNext() {
+    if (!question || !state.answers[question.id]) {
+      setState((current) => ({
+        ...current,
+        warningMessage: 'Answer this question before going to the next one.',
+      }))
+      return
+    }
+
     setState((current) => ({
       ...current,
       currentIndex: Math.min(questions.length - 1, current.currentIndex + 1),
-    }))
-  }
-
-  function goToQuestion(index) {
-    setState((current) => ({
-      ...current,
-      currentIndex: index,
     }))
   }
 
@@ -302,7 +251,7 @@ function AssessmentPage({ session, onLogout }) {
     if (!allAnswered) {
       setState((current) => ({
         ...current,
-        showIncompleteWarning: true,
+        warningMessage: 'Answer all questions before submitting.',
         showConfirmModal: false,
       }))
       return
@@ -310,7 +259,7 @@ function AssessmentPage({ session, onLogout }) {
 
     setState((current) => ({
       ...current,
-      showIncompleteWarning: false,
+      warningMessage: '',
       showConfirmModal: true,
     }))
   }
@@ -428,32 +377,12 @@ function AssessmentPage({ session, onLogout }) {
           ▲
         </button>
 
-        <div className="desktop-question-list-wrap">
-          <div className="desktop-question-list" aria-label="Question navigation">
-            {desktopQuestionSlots.map((slot) => {
-              if (slot.type === 'ellipsis') {
-                return (
-                  <div key={slot.key} aria-hidden="true" className="desktop-question-ellipsis">
-                    …
-                  </div>
-                )
-              }
-
-              const isCurrent = slot.index === state.currentIndex
-              const isAnswered = Boolean(state.answers[slot.question.id])
-
-              return (
-                <button
-                  key={slot.question.id}
-                  className={`desktop-question-chip${isCurrent ? ' current' : ''}${isAnswered ? ' answered' : ' unanswered'}`}
-                  disabled={state.isSubmitting || state.isSubmitSuccess}
-                  type="button"
-                  onClick={() => goToQuestion(slot.index)}
-                >
-                  <span className="desktop-question-chip-number">{slot.index + 1}</span>
-                </button>
-              )
-            })}
+        <div className="desktop-progress-wrap" aria-label="Assessment progress">
+          <div className="desktop-progress-track">
+            <div className="desktop-progress-fill" style={{ height: `${progressPercent}%` }} />
+          </div>
+          <div className="desktop-progress-label">
+            {answeredCount}/{questions.length}
           </div>
         </div>
 
@@ -487,38 +416,14 @@ function AssessmentPage({ session, onLogout }) {
         >
           ◀
         </button>
-        <div className="mobile-question-list-wrap">
-          <div className="mobile-question-list" aria-label="Question navigation">
-            {mobileQuestionSlots.map((slot) => {
-              if (slot.type === 'ellipsis') {
-                return (
-                  <div key={slot.key} aria-hidden="true" className="mobile-question-ellipsis">
-                    …
-                  </div>
-                )
-              }
-
-              const isCurrent = slot.index === state.currentIndex
-              const isAnswered = Boolean(state.answers[slot.question.id])
-
-              return (
-                <button
-                  key={slot.question.id}
-                  className={`mobile-question-chip${isCurrent ? ' current' : ''}${isAnswered ? ' answered' : ' unanswered'}`}
-                  disabled={state.isSubmitting || state.isSubmitSuccess}
-                  type="button"
-                  onClick={() => goToQuestion(slot.index)}
-                >
-                  <span className="mobile-question-chip-inner">
-                    <span className="mobile-question-chip-number">{slot.index + 1}</span>
-                    <span
-                      aria-hidden="true"
-                      className={`mobile-question-chip-dot${isAnswered ? ' answered' : ' unanswered'}`}
-                    />
-                  </span>
-                </button>
-              )
-            })}
+        <div className="mobile-progress-wrap">
+          <div className="mobile-progress" aria-label="Assessment progress">
+            <div className="mobile-progress-track">
+              <div className="mobile-progress-fill" style={{ width: `${progressPercent}%` }} />
+            </div>
+            <div className="mobile-progress-label">
+              {answeredCount}/{questions.length}
+            </div>
           </div>
         </div>
         {isLastQuestion ? (
@@ -548,9 +453,9 @@ function AssessmentPage({ session, onLogout }) {
         </div>
       ) : null}
 
-      {state.showIncompleteWarning ? (
+      {state.warningMessage ? (
         <div className="toast-warning" role="alert">
-          Answer all questions before submitting.
+          {state.warningMessage}
         </div>
       ) : null}
 
