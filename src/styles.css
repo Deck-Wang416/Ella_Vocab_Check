@@ -181,45 +181,9 @@ button {
 
 .assessment-page {
   min-height: 100vh;
+  display: grid;
+  align-content: center;
   padding: 28px 28px 132px;
-}
-
-.assessment-header {
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-  gap: 16px;
-  max-width: 1100px;
-  margin: 0 auto 24px;
-}
-
-.assessment-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  margin-right: auto;
-}
-
-.assessment-brand-logo {
-  width: 42px;
-  height: 42px;
-  flex: 0 0 auto;
-  display: block;
-  border-radius: 12px;
-}
-
-.assessment-brand-name {
-  font-size: 1rem;
-  font-weight: 400;
-  letter-spacing: 0;
-  color: var(--text-muted);
-}
-
-.assessment-header .ghost-button {
-  min-height: 36px;
-  padding: 8px 12px;
-  font-size: 0.88rem;
 }
 
 .question-card {
@@ -341,20 +305,13 @@ button {
     --sidebar-width: 88px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
-    grid-template-areas:
-      "header header"
-      "question sidebar";
+    grid-template-areas: "question sidebar";
     align-items: stretch;
+    align-content: center;
     gap: 16px;
     max-width: 1160px;
     margin: 0 auto;
-    padding: 28px 28px 40px;
-  }
-
-  .assessment-header {
-    grid-area: header;
-    max-width: none;
-    margin: 0 0 4px;
+    padding: 40px 28px;
   }
 
   .question-card {
@@ -518,11 +475,7 @@ button {
 
 @media (min-width: 721px) and (max-height: 900px) {
   .assessment-page {
-    padding: 18px 24px 104px;
-  }
-
-  .assessment-header {
-    margin-bottom: 14px;
+    padding: 32px 24px;
   }
 
   .question-card {
@@ -570,39 +523,7 @@ button {
     display: block;
     max-width: none;
     margin: 0;
-    padding: 40px 14px calc(172px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .assessment-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    max-width: 720px;
-    margin: 0 auto 26px;
-    padding: 0;
-  }
-
-  .assessment-header .ghost-button {
-    min-height: 36px;
-    padding: 8px 12px;
-    font-size: 0.92rem;
-    white-space: nowrap;
-    border-radius: 999px;
-  }
-
-  .assessment-brand {
-    gap: 10px;
-  }
-
-  .assessment-brand-logo {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-  }
-
-  .assessment-brand-name {
-    font-size: 1.08rem;
+    padding: 40px 14px calc(136px + env(safe-area-inset-bottom, 0px));
   }
 
   .question-card {
@@ -759,21 +680,7 @@ button {
 
 @media (max-width: 420px) {
   .assessment-page {
-    padding: 34px 10px calc(164px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .assessment-header {
-    align-items: flex-start;
-    margin-bottom: 20px;
-  }
-
-  .assessment-brand-logo {
-    width: 34px;
-    height: 34px;
-  }
-
-  .assessment-brand-name {
-    font-size: 1rem;
+    padding: 34px 10px calc(132px + env(safe-area-inset-bottom, 0px));
   }
 
   .bottom-bar {
