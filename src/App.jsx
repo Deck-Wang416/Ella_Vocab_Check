@@ -71,9 +71,7 @@ function LoginPage({ message, onLogin }) {
   return (
     <section className="login-page">
       <div className="login-card">
-        <p className="eyebrow">Ella Vocabulary Assessment</p>
-        <h1>Sign in</h1>
-        <p className="support-copy">Use the assigned account to begin the assessment.</p>
+        <h1>Login</h1>
         <form className="login-form" onSubmit={handleSubmit}>
           <label>
             <span>Username</span>
@@ -297,11 +295,8 @@ function AssessmentPage({ session, onLogout }) {
 
   return (
     <section className="assessment-page">
-      <header className="assessment-header">
-        <div>
-          <p className="eyebrow">Assessment</p>
-          <h1>{assessment.title || 'Vocabulary Check'}</h1>
-        </div>
+      <header className="assessment-header assessment-header-minimal">
+        <div />
         <button className="ghost-button" type="button" onClick={handleLogoutIntent}>
           Log out
         </button>

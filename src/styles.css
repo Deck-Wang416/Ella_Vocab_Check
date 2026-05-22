@@ -208,6 +208,10 @@ button {
   margin: 0 auto 24px;
 }
 
+.assessment-header-minimal {
+  justify-content: flex-end;
+}
+
 .question-card {
   max-width: 1100px;
   margin: 0 auto;
