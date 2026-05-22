@@ -91,6 +91,14 @@ function buildQuestionSlots(questions, currentIndex, slotCount) {
   ]
 }
 
+function formatPromptWord(word) {
+  if (!word) {
+    return ''
+  }
+
+  return word.charAt(0).toUpperCase() + word.slice(1)
+}
+
 function LoginPage({ message, onLogin }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -236,7 +244,6 @@ function AssessmentPage({ session, onLogout }) {
   const questions = assessment?.questions ?? []
   const question = questions[state.currentIndex]
   const isLastQuestion = state.currentIndex === questions.length - 1
-  const answeredCount = questions.filter((item) => state.answers[item.id]).length
   const desktopQuestionSlots = buildQuestionSlots(questions, state.currentIndex, 7)
   const mobileQuestionSlots = buildQuestionSlots(questions, state.currentIndex, 3)
 
@@ -368,15 +375,9 @@ function AssessmentPage({ session, onLogout }) {
 
       <article className="question-card">
         <div className="question-meta">
-          <div className="question-progress-row">
-            <p className="question-progress">
-              Question {state.currentIndex + 1} of {questions.length}
-            </p>
-            <p className="question-answered">
-              {answeredCount} / {questions.length} answered
-            </p>
-          </div>
-          <p className="question-word">{question.word}</p>
+          <p className="question-word">
+            Which picture shows <span className="question-word-keyword">{formatPromptWord(question.word)}</span>?
+          </p>
         </div>
 
         <div className="option-grid">

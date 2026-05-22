@@ -79,7 +79,6 @@ button {
   margin: 0;
 }
 
-.question-progress,
 .modal-card p,
 .status-card,
 .form-error,
@@ -234,32 +233,18 @@ button {
 }
 
 .question-meta {
-  margin-bottom: 24px;
-}
-
-.question-progress-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 10px;
-}
-
-.question-progress {
-  margin: 0;
-  font-weight: 600;
-}
-
-.question-answered {
-  margin: 0;
-  color: var(--text-muted);
-  font-weight: 600;
-  text-align: right;
+  margin-bottom: 34px;
+  text-align: center;
 }
 
 .question-word {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.28rem, 2.5vw, 1.8rem);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.question-word-keyword {
   font-weight: 800;
 }
 
@@ -306,19 +291,22 @@ button {
 
 .image-frame {
   width: 100%;
-  aspect-ratio: 4 / 3;
   border-radius: 16px;
-  overflow: hidden;
+  overflow: visible;
   background:
     linear-gradient(180deg, rgba(22, 93, 85, 0.06), rgba(22, 93, 85, 0.12)),
     #fff;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
 }
 
 .image-frame img {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(29vh, 252px);
   object-fit: contain;
 }
 
@@ -584,7 +572,7 @@ button {
   }
 
   .question-meta {
-    margin-bottom: 14px;
+    margin-bottom: 22px;
   }
 
   .question-word {
@@ -603,8 +591,6 @@ button {
 
   .image-frame {
     border-radius: 14px;
-    aspect-ratio: auto;
-    height: min(22vh, 210px);
   }
 }
 
@@ -669,17 +655,12 @@ button {
   }
 
   .question-meta {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   .question-word {
-    font-size: clamp(2rem, 7.8vw, 2.7rem);
-    line-height: 1.02;
-  }
-
-  .question-progress-row {
-    gap: 12px;
-    margin-bottom: 12px;
+    font-size: clamp(1.16rem, 4vw, 1.45rem);
+    line-height: 1.24;
   }
 
   .option-grid {
@@ -694,7 +675,7 @@ button {
 
   .image-frame {
     border-radius: 16px;
-    aspect-ratio: 8 / 5;
+    padding: 10px;
   }
 
   .bottom-bar {
@@ -863,13 +844,8 @@ button {
     right: 10px;
   }
 
-  .question-progress,
   .modal-card p {
     font-size: 0.94rem;
-  }
-
-  .question-progress-row {
-    align-items: flex-start;
   }
 
   .question-card {
@@ -878,7 +854,7 @@ button {
   }
 
   .question-word {
-    font-size: 1.9rem;
+    font-size: 1.04rem;
   }
 
   .option-card {

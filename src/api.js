@@ -9,6 +9,21 @@ function normalizeRecordMap(record) {
   return Object.values(record)
 }
 
+function sortOptionsById(options) {
+  return [...options].sort((left, right) => compareOptionIds(left?.id, right?.id))
+}
+
+function compareOptionIds(left, right) {
+  const leftNumber = Number(left)
+  const rightNumber = Number(right)
+
+  if (!Number.isNaN(leftNumber) && !Number.isNaN(rightNumber)) {
+    return leftNumber - rightNumber
+  }
+
+  return String(left).localeCompare(String(right), undefined, { numeric: true })
+}
+
 export async function loginWithVocabAccount(username, password) {
   const trimmedUsername = username.trim()
   const accountRef = child(ref(database), `vocabAccounts/${trimmedUsername}`)
@@ -63,7 +78,7 @@ export async function fetchAssessmentForUser(username) {
   const questions = normalizeRecordMap(assessment.questions).sort((a, b) => a.order - b.order)
   const normalizedQuestions = questions.map((question) => ({
     ...question,
-    options: normalizeRecordMap(question.options),
+    options: sortOptionsById(normalizeRecordMap(question.options)),
   }))
 
   return {
