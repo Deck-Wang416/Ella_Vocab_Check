@@ -39,6 +39,58 @@ function App() {
   )
 }
 
+function buildQuestionSlots(questions, currentIndex, slotCount) {
+  const total = questions.length
+  const edgeWindow = slotCount - 2
+  const middleWindow = slotCount - 4
+
+  if (total <= slotCount) {
+    return questions.map((question, index) => ({
+      type: 'question',
+      question,
+      index,
+    }))
+  }
+
+  if (currentIndex <= edgeWindow - 1) {
+    return [
+      ...questions.slice(0, edgeWindow).map((question, index) => ({
+        type: 'question',
+        question,
+        index,
+      })),
+      { type: 'ellipsis', key: `ellipsis-end-${slotCount}` },
+      { type: 'question', question: questions[total - 1], index: total - 1 },
+    ]
+  }
+
+  if (currentIndex >= total - edgeWindow) {
+    return [
+      { type: 'question', question: questions[0], index: 0 },
+      { type: 'ellipsis', key: `ellipsis-start-${slotCount}` },
+      ...questions.slice(total - edgeWindow).map((question, offset) => ({
+        type: 'question',
+        question,
+        index: total - edgeWindow + offset,
+      })),
+    ]
+  }
+
+  const middleStart = currentIndex - Math.floor(middleWindow / 2)
+
+  return [
+    { type: 'question', question: questions[0], index: 0 },
+    { type: 'ellipsis', key: `ellipsis-start-${slotCount}` },
+    ...questions.slice(middleStart, middleStart + middleWindow).map((question, offset) => ({
+      type: 'question',
+      question,
+      index: middleStart + offset,
+    })),
+    { type: 'ellipsis', key: `ellipsis-end-${slotCount}` },
+    { type: 'question', question: questions[total - 1], index: total - 1 },
+  ]
+}
+
 function LoginPage({ message, onLogin }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -185,6 +237,8 @@ function AssessmentPage({ session, onLogout }) {
   const question = questions[state.currentIndex]
   const isLastQuestion = state.currentIndex === questions.length - 1
   const answeredCount = questions.filter((item) => state.answers[item.id]).length
+  const desktopQuestionSlots = buildQuestionSlots(questions, state.currentIndex, 7)
+  const mobileQuestionSlots = buildQuestionSlots(questions, state.currentIndex, 5)
 
   function selectOption(questionId, optionId) {
     setState((current) => ({
@@ -208,6 +262,13 @@ function AssessmentPage({ session, onLogout }) {
     setState((current) => ({
       ...current,
       currentIndex: Math.min(questions.length - 1, current.currentIndex + 1),
+    }))
+  }
+
+  function goToQuestion(index) {
+    setState((current) => ({
+      ...current,
+      currentIndex: index,
     }))
   }
 
@@ -295,8 +356,7 @@ function AssessmentPage({ session, onLogout }) {
 
   return (
     <section className="assessment-page">
-      <header className="assessment-header assessment-header-minimal">
-        <div />
+      <header className="assessment-header">
         <button className="ghost-button" type="button" onClick={handleLogoutIntent}>
           Log out
         </button>
@@ -304,9 +364,14 @@ function AssessmentPage({ session, onLogout }) {
 
       <article className="question-card">
         <div className="question-meta">
-          <p className="question-progress">
-            Question {state.currentIndex + 1} of {questions.length}
-          </p>
+          <div className="question-progress-row">
+            <p className="question-progress">
+              Question {state.currentIndex + 1} of {questions.length}
+            </p>
+            <p className="question-answered">
+              {answeredCount} / {questions.length} answered
+            </p>
+          </div>
           <p className="question-word">{question.word}</p>
         </div>
 
@@ -331,26 +396,48 @@ function AssessmentPage({ session, onLogout }) {
         </div>
       </article>
 
-      <footer className="bottom-bar">
+      <aside className="desktop-sidebar">
         <button
-          className="secondary-button"
+          className="desktop-nav-button secondary-button"
           disabled={state.currentIndex === 0 || state.isSubmitting || state.isSubmitSuccess}
           type="button"
           onClick={goToPrevious}
         >
-          Previous
+          ▲
         </button>
-        <div className="bottom-status">
-          <p>
-            Question {state.currentIndex + 1} of {questions.length}
-          </p>
-          <p>
-            {answeredCount} / {questions.length} answered
-          </p>
+
+        <div className="desktop-question-list-wrap">
+          <div className="desktop-question-list" aria-label="Question navigation">
+            {desktopQuestionSlots.map((slot) => {
+              if (slot.type === 'ellipsis') {
+                return (
+                  <div key={slot.key} aria-hidden="true" className="desktop-question-ellipsis">
+                    …
+                  </div>
+                )
+              }
+
+              const isCurrent = slot.index === state.currentIndex
+              const isAnswered = Boolean(state.answers[slot.question.id])
+
+              return (
+                <button
+                  key={slot.question.id}
+                  className={`desktop-question-chip${isCurrent ? ' current' : ''}${isAnswered ? ' answered' : ' unanswered'}`}
+                  disabled={state.isSubmitting || state.isSubmitSuccess}
+                  type="button"
+                  onClick={() => goToQuestion(slot.index)}
+                >
+                  <span className="desktop-question-chip-number">{slot.index + 1}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
+
         {isLastQuestion ? (
           <button
-            className="primary-button"
+            className="desktop-nav-button primary-button"
             disabled={state.isSubmitting || state.isSubmitSuccess}
             type="button"
             onClick={handleSubmitIntent}
@@ -359,12 +446,76 @@ function AssessmentPage({ session, onLogout }) {
           </button>
         ) : (
           <button
-            className="primary-button"
+            className="desktop-nav-button primary-button"
             disabled={state.isSubmitting || state.isSubmitSuccess}
             type="button"
             onClick={goToNext}
           >
-            Next
+            ▼
+          </button>
+        )}
+      </aside>
+
+      <footer className="bottom-bar">
+        <button
+          className="secondary-button mobile-nav-button"
+          disabled={state.currentIndex === 0 || state.isSubmitting || state.isSubmitSuccess}
+          type="button"
+          onClick={goToPrevious}
+        >
+          ◀
+        </button>
+        <div className="mobile-question-list-wrap">
+          <div className="mobile-question-list" aria-label="Question navigation">
+            {mobileQuestionSlots.map((slot) => {
+              if (slot.type === 'ellipsis') {
+                return (
+                  <div key={slot.key} aria-hidden="true" className="mobile-question-ellipsis">
+                    …
+                  </div>
+                )
+              }
+
+              const isCurrent = slot.index === state.currentIndex
+              const isAnswered = Boolean(state.answers[slot.question.id])
+
+              return (
+                <button
+                  key={slot.question.id}
+                  className={`mobile-question-chip${isCurrent ? ' current' : ''}${isAnswered ? ' answered' : ' unanswered'}`}
+                  disabled={state.isSubmitting || state.isSubmitSuccess}
+                  type="button"
+                  onClick={() => goToQuestion(slot.index)}
+                >
+                  <span className="mobile-question-chip-inner">
+                    <span className="mobile-question-chip-number">{slot.index + 1}</span>
+                    <span
+                      aria-hidden="true"
+                      className={`mobile-question-chip-dot${isAnswered ? ' answered' : ' unanswered'}`}
+                    />
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+        {isLastQuestion ? (
+          <button
+            className="primary-button mobile-nav-button"
+            disabled={state.isSubmitting || state.isSubmitSuccess}
+            type="button"
+            onClick={handleSubmitIntent}
+          >
+            Submit
+          </button>
+        ) : (
+          <button
+            className="primary-button mobile-nav-button"
+            disabled={state.isSubmitting || state.isSubmitSuccess}
+            type="button"
+            onClick={goToNext}
+          >
+            ▶
           </button>
         )}
       </footer>
