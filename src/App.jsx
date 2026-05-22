@@ -114,6 +114,7 @@ function LoginPage({ message, onLogin }) {
 function AssessmentPage({ session, onLogout }) {
   const [state, setState] = useState({
     isLoading: true,
+    isQuestionLoading: true,
     isSubmitting: false,
     isSubmitSuccess: false,
     error: '',
@@ -222,6 +223,87 @@ function AssessmentPage({ session, onLogout }) {
     }))
   }
 
+  useEffect(() => {
+    if (!question) {
+      return
+    }
+
+    let active = true
+    const imageUrls = question.options.map((option) => option.imageUrl).filter(Boolean)
+
+    setState((current) => ({
+      ...current,
+      isQuestionLoading: true,
+      error: '',
+    }))
+
+    if (imageUrls.length === 0) {
+      setState((current) => ({
+        ...current,
+        isQuestionLoading: false,
+        error: 'Some images for this question are missing.',
+      }))
+      return
+    }
+
+    let loadedCount = 0
+    let hasFailed = false
+
+    function handleLoad() {
+      loadedCount += 1
+
+      if (!active || hasFailed || loadedCount !== imageUrls.length) {
+        return
+      }
+
+      setState((current) => ({
+        ...current,
+        isQuestionLoading: false,
+      }))
+    }
+
+    function handleError() {
+      if (!active || hasFailed) {
+        return
+      }
+
+      hasFailed = true
+
+      setState((current) => ({
+        ...current,
+        isQuestionLoading: false,
+        error: 'Failed to load the images for this question.',
+      }))
+    }
+
+    const preloadImages = imageUrls.map((url) => {
+      const image = new window.Image()
+      image.onload = handleLoad
+      image.onerror = handleError
+      image.src = url
+
+      if (image.complete) {
+        window.setTimeout(() => {
+          if (image.naturalWidth > 0) {
+            handleLoad()
+          } else {
+            handleError()
+          }
+        }, 0)
+      }
+
+      return image
+    })
+
+    return () => {
+      active = false
+      preloadImages.forEach((image) => {
+        image.onload = null
+        image.onerror = null
+      })
+    }
+  }, [question])
+
   function goToPrevious() {
     setState((current) => ({
       ...current,
@@ -299,10 +381,10 @@ function AssessmentPage({ session, onLogout }) {
     }
   }
 
-  if (state.isLoading) {
+  if (state.isLoading || state.isQuestionLoading) {
     return (
       <section className="status-page">
-        <div className="status-card">Loading assessment...</div>
+        <div className="status-card">Loading question...</div>
       </section>
     )
   }
