@@ -238,7 +238,7 @@ function AssessmentPage({ session, onLogout }) {
   const isLastQuestion = state.currentIndex === questions.length - 1
   const answeredCount = questions.filter((item) => state.answers[item.id]).length
   const desktopQuestionSlots = buildQuestionSlots(questions, state.currentIndex, 7)
-  const mobileQuestionSlots = buildQuestionSlots(questions, state.currentIndex, 5)
+  const mobileQuestionSlots = buildQuestionSlots(questions, state.currentIndex, 3)
 
   function selectOption(questionId, optionId) {
     setState((current) => ({
@@ -357,6 +357,10 @@ function AssessmentPage({ session, onLogout }) {
   return (
     <section className="assessment-page">
       <header className="assessment-header">
+        <div className="assessment-brand">
+          <img alt="ELLA logo" className="assessment-brand-logo" src="/ella_logo.png" />
+          <span className="assessment-brand-name">ELLA</span>
+        </div>
         <button className="ghost-button" type="button" onClick={handleLogoutIntent}>
           Log out
         </button>
@@ -501,7 +505,7 @@ function AssessmentPage({ session, onLogout }) {
         </div>
         {isLastQuestion ? (
           <button
-            className="primary-button mobile-nav-button"
+            className="primary-button mobile-nav-button mobile-submit-button"
             disabled={state.isSubmitting || state.isSubmitSuccess}
             type="button"
             onClick={handleSubmitIntent}

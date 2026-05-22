@@ -194,6 +194,35 @@ button {
   margin: 0 auto 24px;
 }
 
+.assessment-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.assessment-brand-logo {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  display: block;
+  border-radius: 12px;
+}
+
+.assessment-brand-name {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+
+.assessment-header .ghost-button {
+  min-height: 36px;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+}
+
 .question-card {
   max-width: 1100px;
   margin: 0 auto;
@@ -383,7 +412,7 @@ button {
     display: grid;
     gap: 8px;
     justify-items: center;
-    width: 100%;
+    width: calc(100% - 12px);
     pointer-events: auto;
   }
 
@@ -402,7 +431,7 @@ button {
     position: absolute;
     left: 6px;
     right: 6px;
-    width: 100%;
+    width: auto;
     min-height: 42px;
     padding: 8px 10px;
     font-size: 0.92rem;
@@ -610,11 +639,25 @@ button {
   }
 
   .assessment-header .ghost-button {
-    min-height: 42px;
-    padding: 10px 14px;
+    min-height: 36px;
+    padding: 8px 12px;
     font-size: 0.92rem;
     white-space: nowrap;
     border-radius: 999px;
+  }
+
+  .assessment-brand {
+    gap: 10px;
+  }
+
+  .assessment-brand-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+
+  .assessment-brand-name {
+    font-size: 1.08rem;
   }
 
   .question-card {
@@ -679,7 +722,14 @@ button {
     place-items: center;
     border-radius: 999px;
     text-align: center;
+    font-size: 0.9rem;
     z-index: 1;
+  }
+
+  .mobile-submit-button {
+    width: 82px;
+    min-width: 82px;
+    font-size: 0.86rem;
   }
 
   .bottom-bar > .mobile-nav-button:first-child {
@@ -797,6 +847,15 @@ button {
   .assessment-header {
     align-items: flex-start;
     margin-bottom: 20px;
+  }
+
+  .assessment-brand-logo {
+    width: 34px;
+    height: 34px;
+  }
+
+  .assessment-brand-name {
+    font-size: 1rem;
   }
 
   .bottom-bar {
