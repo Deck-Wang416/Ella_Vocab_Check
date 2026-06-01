@@ -296,7 +296,7 @@ button {
   display: none;
 }
 
-.mobile-progress-wrap {
+.mobile-position-wrap {
   display: none;
 }
 
@@ -338,36 +338,16 @@ button {
     backdrop-filter: blur(10px);
   }
 
-  .desktop-progress-wrap {
+  .desktop-position-label {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    gap: 12px;
+    color: #56657e;
+    font-weight: 700;
+    font-size: 0.92rem;
+    letter-spacing: 0.02em;
     pointer-events: none;
-  }
-
-  .desktop-progress-track {
-    position: relative;
-    width: 18px;
-    height: min(42vh, 360px);
-    border-radius: 999px;
-    background: rgba(83, 98, 124, 0.18);
-    overflow: hidden;
-  }
-
-  .desktop-progress-fill {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #2a8d80 0%, #165d55 100%);
   }
 
   .desktop-nav-button {
@@ -386,13 +366,6 @@ button {
 
   .desktop-sidebar > .desktop-nav-button:last-child {
     bottom: 8px;
-  }
-
-  .desktop-progress-label {
-    color: #56657e;
-    font-weight: 700;
-    font-size: 0.88rem;
-    letter-spacing: 0.02em;
   }
 
   .bottom-bar {
@@ -607,9 +580,9 @@ button {
     right: 12px;
   }
 
-  .mobile-progress-wrap {
+  .mobile-position-wrap {
     position: absolute;
-    top: calc(50% + 7px);
+    top: calc(50% + 3px);
     left: 98px;
     right: 98px;
     transform: translateY(-50%);
@@ -622,38 +595,11 @@ button {
     pointer-events: none;
   }
 
-  .mobile-progress {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    width: 100%;
-  }
-
-  .mobile-progress-track {
-    position: relative;
-    width: 100%;
-    height: 12px;
-    border-radius: 999px;
-    background: rgba(83, 98, 124, 0.18);
-    overflow: hidden;
-  }
-
-  .mobile-progress-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #2a8d80 0%, #165d55 100%);
-  }
-
-  .mobile-progress-label {
+  .mobile-position-label {
     color: #56657e;
     font-weight: 700;
-    font-size: 0.82rem;
+    font-size: 0.86rem;
+    letter-spacing: 0.02em;
   }
 
   .modal-backdrop {
@@ -688,8 +634,8 @@ button {
     right: 10px;
   }
 
-  .mobile-progress-wrap {
-    top: calc(50% + 7px);
+  .mobile-position-wrap {
+    top: calc(50% + 3px);
     left: 92px;
     right: 92px;
   }

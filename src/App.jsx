@@ -209,8 +209,6 @@ function AssessmentPage({ session, onLogout }) {
   const questions = assessment?.questions ?? []
   const question = questions[state.currentIndex]
   const isLastQuestion = state.currentIndex === questions.length - 1
-  const answeredCount = questions.filter((item) => Boolean(state.answers[item.id])).length
-  const progressPercent = questions.length === 0 ? 0 : (answeredCount / questions.length) * 100
 
   function selectOption(questionId, optionId) {
     setState((current) => ({
@@ -437,13 +435,8 @@ function AssessmentPage({ session, onLogout }) {
           ▲
         </button>
 
-        <div className="desktop-progress-wrap" aria-label="Assessment progress">
-          <div className="desktop-progress-track">
-            <div className="desktop-progress-fill" style={{ height: `${progressPercent}%` }} />
-          </div>
-          <div className="desktop-progress-label">
-            {state.currentIndex + 1}/{questions.length}
-          </div>
+        <div className="desktop-position-label" aria-label="Current question">
+          {state.currentIndex + 1}/{questions.length}
         </div>
 
         {isLastQuestion ? (
@@ -476,14 +469,9 @@ function AssessmentPage({ session, onLogout }) {
         >
           ◀
         </button>
-        <div className="mobile-progress-wrap">
-          <div className="mobile-progress" aria-label="Assessment progress">
-            <div className="mobile-progress-track">
-              <div className="mobile-progress-fill" style={{ width: `${progressPercent}%` }} />
-            </div>
-            <div className="mobile-progress-label">
-              {state.currentIndex + 1}/{questions.length}
-            </div>
+        <div className="mobile-position-wrap">
+          <div className="mobile-position-label" aria-label="Current question">
+            {state.currentIndex + 1}/{questions.length}
           </div>
         </div>
         {isLastQuestion ? (
