@@ -88,21 +88,35 @@ export async function fetchAssessmentForUser(username) {
     },
     assessment: {
       id: assessment.id,
-      title: assessment.title,
       questions: normalizedQuestions,
     },
   }
 }
 
-export async function submitAssessment({ username, assessmentId, answers }) {
+function buildResponses(questions, answers) {
+  return Object.fromEntries(
+    questions.map((question) => [
+      question.id,
+      {
+        word: question.word,
+        selectedOptionId: answers[question.id] ?? null,
+      },
+    ]),
+  )
+}
+
+export async function submitAssessment({ username, assessmentId, questions, answers }) {
   const submittedAt = serverTimestamp()
   const accountPath = `vocabAccounts/${username}`
   const resultPath = `vocabResults/${username}`
+  const responses = buildResponses(questions, answers)
 
   await update(ref(database), {
     [`${resultPath}/username`]: username,
     [`${resultPath}/assessmentId`]: assessmentId,
-    [`${resultPath}/answers`]: answers,
+    [`${resultPath}/responses`]: responses,
+    [`${resultPath}/answers`]: null,
+    [`${resultPath}/words`]: null,
     [`${resultPath}/submittedAt`]: submittedAt,
     [`${accountPath}/submitted`]: true,
     [`${accountPath}/submittedAt`]: submittedAt,

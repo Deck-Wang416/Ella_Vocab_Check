@@ -354,6 +354,7 @@ function AssessmentPage({ session, onLogout }) {
       await submitAssessment({
         username: session.username,
         assessmentId: assessment.id,
+        questions,
         answers: state.answers,
       })
       setState((current) => ({
